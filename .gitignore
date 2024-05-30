@@ -1,2 +1,5 @@
 *.class
 node_modules
+.gitignore
+.DS_store
+.vscode
