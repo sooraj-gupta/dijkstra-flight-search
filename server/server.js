@@ -3,8 +3,9 @@ const path = require('path');
 const app = express();
 const port = 3000;
 
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files from the 'public' directory on /airlines
+app.use('/airlines', express.static(path.join(__dirname, 'public')));
+
 
 // Define a route to run JavaScript code
 app.get('/airlines/load', (req, res) => {
