@@ -1,4 +1,3 @@
-package server;
 // --== CS400 File Header Information ==--
 // Name:Kyran
 // Email: ksinha22@gmail.com

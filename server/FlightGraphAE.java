@@ -1,4 +1,3 @@
-package server;
 // --== CS400 File Header Information ==--
 // Name: Vishal Singh Downdiyakhed
 // Email: vsingh48@wisc.edu 

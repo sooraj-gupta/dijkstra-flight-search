@@ -1,4 +1,3 @@
-package server;
 /**
  * This class represents a flight Route object that is an edge in our larger graph. Each route
  * contains references to the starting and ending airports of the route, the airlines

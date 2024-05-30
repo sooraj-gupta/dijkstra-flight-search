@@ -1,4 +1,3 @@
-package server;
 import java.util.List;
 
 public class FlightGraphFD<NodeType, EdgeType extends Number> implements FlightGraphInterface<NodeType, EdgeType>

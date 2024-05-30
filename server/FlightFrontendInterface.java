@@ -1,4 +1,3 @@
-package server;
 public interface FlightFrontendInterface {
   // public FlightFrontendXX(FlightBackendInterface backend);
 

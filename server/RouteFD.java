@@ -1,4 +1,3 @@
-package server;
 public class RouteFD extends Number implements RouteInterface {
   
   private double distance;
