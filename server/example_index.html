@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flights</title>
+  <style>
+
+    @import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+    :root
+    {
+      --color1: #fff;
+      --color2: #222;
+      --color3: #000a;
+    }
+
+    html, body{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body
+    {
+      font-family: 'Anuphan', sans-serif;
+      color: var(--color2);
+      box-sizing: border-box;
+      padding: 50px;
+      height: 100vh
+    }
+    .main-wrapper{
+      
+      width: 100%;
+      box-sizing: border-box;
+      height: 100%;
+      background-color: var(--color1);
+      /* border-radius: 30px; */
+      /* box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5); */
+      /* border: 1px solid #0002; */
+    }
+
+    .wrapper{
+      text-align: left;
+      padding: 30px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    h2
+    {
+      font-weight: 400;
+      font-size: 2.5em;
+      margin: 0px;
+    }
+
+    .inputs
+    {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content:stretch;
+
+      padding: 25px 0px;
+      margin-top: 40px;
+
+      border-top: 1px solid #0002;
+    }
+    .dropdown
+    {
+      width: 100%;
+      position: relative;
+      margin: 0px 5px;
+    }
+
+    .dropdown-btn
+    {
+      background-color: var(--color1);
+      border: 1px solid #0005;
+      border-radius: 5px;
+      padding: 10px 15px;
+      cursor: pointer;
+      transition:  0.2s ease;
+      color: var(--color3);
+    }
+    .dropdown-btn:hover
+    {
+      background-color: #fafafa;
+    }
+    .dropdown-btn span
+    {
+      font-size: 1em;
+      font-weight: 400;
+    }
+    .dropdown-content
+    {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background-color: var(--color1);
+      border: 1px solid #0005;
+      border-bottom-right-radius: 5px;
+      border-bottom-left-radius: 5px;
+      border-top: none;
+      display: none;
+      box-sizing: border-box;
+      z-index: 1;
+      max-height: 200px;
+      overflow-y: scroll;
+    }
+    .dropdown-content .dropdown-item
+    {
+      cursor: pointer;
+      transition: all 0.1s ease;
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-size: 0.9em;
+    }
+    .dropdown-content .dropdown-item span:first-of-type
+    {
+      margin-right: 4px;
+    }
+    .dropdown.on .dropdown-content
+    {
+      display: block;
+    }
+    
+    .dropdown-content .dropdown-item:hover
+    {
+      background-color: #f8f8f8;
+    }
+    .dropdown-content .dropdown-item:active
+    {
+      background-color: #eee;
+    }
+    .dropdown.on .dropdown-btn
+    {
+      border-bottom-right-radius: 0px;
+      border-bottom-left-radius: 0px;
+      border-bottom-color: transparent;
+    }
+
+    .dropdown::after
+    {
+      content: "Leaving From";
+      position: absolute;
+      top: 0px;
+      background-color: transparent;
+      font-size: 11px;
+      opacity: 0;
+      transition: all 0.2s;
+    }
+
+    .dropdown:first-of-type.selected::after
+    {
+      content: "Leaving From";
+      left: 41px;
+    }
+    .dropdown:nth-of-type(2).selected::after
+    {
+      content: "Going To";
+      left: 41px;
+    }
+    .dropdown:nth-of-type(3).selected::after
+    {
+      content: "Airline";
+      left: 49px;
+    }
+
+    .dropdown.selected::after
+    {
+      position: absolute;
+      top: 7px;
+      opacity: 0.5;
+    }
+    .dropdown.selected .dropdown-btn
+    {
+      color: var(--color2);
+      padding-top: 16px;
+      padding-bottom: 4px;
+    }
+
+    button
+    {
+      background-color: var(--color2);
+      color: var(--color1);
+      width: 100%;
+      font-family: 'Anuphan', sans-serif;
+      font-size: 1em;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 5px;
+      margin: 0px 5px;
+      box-sizing: border-box;
+      transition: 0.2s;
+    }
+
+    button:hover
+    {
+      cursor: pointer;
+      background-color: #000;
+    }
+
+    button:active
+    {
+      transform: scaleY(0.98) scaleX(0.98);
+    }
+
+    .dropdown:not(.selected) .dropdown-btn::after
+    {
+      font-family: 'Anuphan', sans-serif;
+      content: "\25BC";
+      color: #0002;
+      position: absolute;
+      top: 55%;
+      right: 20px;
+      transform: translateY(-50%) scaleX(2);
+      font-size: 0.2em;
+    }
+
+    .one-result
+    {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0px;
+      border-bottom: 1px solid #0002;
+    }
+    .one-result .summary
+    {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class = "main-wrapper">
+    <div class = "wrapper">
+      <h2>Flights</h2>
+      <div class = "inputs">
+        <div class = "dropdown">
+          <div class = "dropdown-btn">
+            <span class = "title">&#128205; Leaving From</span>
+          </div>
+          <div class = "dropdown-content">
+            <div class = "dropdown-item">
+              <span>&#128747;</span>
+              <span>San Francisco (SFO)</span>
+            </div>
+            <div class = "dropdown-item">
+              <span>&#128747;</span>
+              <span>Los Angeles (LAX)</span>
+            </div>
+            <div class = "dropdown-item">
+              <span>&#128747;</span>
+              <span>Chicago - O'hare (ORD)</span>
+            </div>
+            <div class = "dropdown-item">
+              <span>&#128747;</span>
+              <span>John F Kennedy (JFK)</span>
+            </div>
+            <div class = "dropdown-item">
+              <span>&#128747;</span>
+              <span>Delhi (DEL)</span>
+            </div>
+            <div class = "dropdown-item">
+              <span>&#128747;</span>
+              <span>San Jose (SJC)</span>
+            </div>
+          </div>
+        </div>
+        <div class = "dropdown">
+          <div class = "dropdown-btn">
+            <span class = "title">&#128205; Going To</span>
+          </div>
+          <div class = "dropdown-content">
+            <div class = "dropdown-item">
+              <span>&#128748;</span>
+              <span>San Francisco (SFO)</span>
+            </div>
+            <div class = "dropdown-item">
+              <span>&#128748;</span>
+              <span>Los Angeles (LAX)</span>
+            </div>
+            <div class = "dropdown-item">
+              <span>&#128748;</span>
+              <span>Chicago - O'hare (ORD)</span>
+            </div>
+            <div class = "dropdown-item">
+              <span>&#128748;</span>
+              <span>John F Kennedy (JFK)</span>
+            </div>
+            <div class = "dropdown-item">
+              <span>&#128748;</span>
+              <span>Delhi (DEL)</span>
+            </div>
+            <div class = "dropdown-item">
+              <span>&#128748;</span>
+              <span>San Jose (SJC)</span>
+            </div>
+          </div>
+        </div>
+        <div class = "dropdown">
+          <div class = "dropdown-btn">
+            <span class = "title">&#9992;&#65039;&nbsp;&nbsp; Line of Air</span>
+          </div>
+          <div class = "dropdown-content">
+            <div class = "dropdown-item">
+              <span>&#9992;&#65039;</span>
+              <span>United Airlines</span>
+            </div>
+            <div class = "dropdown-item">
+              <span>&#9992;&#65039;</span>
+              <span>Delta Airlines</span>
+            </div>
+            <div class = "dropdown-item">
+              <span>&#9992;&#65039;</span>
+              <span>American Airlines</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button>Search</button>
+
+      <div class = "one-result">
+        <div class = "summary">
+          <div class = "departure">San Francisco (SFO)</div>
+          <div class = "arrow">&#8594;</div>
+          <div class = "arrival">Los Angeles (LAX)</div>
+          <div class = "airline">Airline: United Airlines</div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const dropdowns = document.querySelectorAll('.dropdown');
+    const dropdownBtns = document.querySelectorAll('.dropdown-btn');
+    const dropdownContents = document.querySelectorAll('.dropdown-content');
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+
+    const closeAllDropdowns = () => {
+      dropdowns.forEach(dropdown => {
+        closeDropdown(dropdown);
+      });
+    }
+
+    const openDropdown = (dropdown) => {
+      closeAllDropdowns();
+      dropdown.classList.add('on');
+    }
+
+    const closeDropdown = (dropdown) => {
+      dropdown.classList.remove('on');
+    }
+
+    dropdownBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        openDropdown(btn.parentElement);
+      });
+
+    });
+
+    document.addEventListener('click', (e) => {
+      if(e.target.classList.contains('dropdown-btn') || e.target.classList.contains('dropdown-item') || e.target.classList.contains('dropdown-content')|| e.target.classList.contains('title'))
+      {
+        return;
+      }
+      closeAllDropdowns();
+    });
+
+    
+    
+
+    dropdownItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        console.log(item.querySelectorAll('span')[0].innerHTML)
+        item.parentElement.parentElement.querySelector('.dropdown-btn').innerHTML = (( 
+          item.parentElement.parentElement.querySelector('.dropdown-btn').querySelector('.title').innerHTML.includes("Leaving From" )
+          || item.parentElement.parentElement.querySelector('.dropdown-btn').querySelector('.title').innerHTML.includes("Going To" )
+        ) ? "&#128205; " : "&#9992;&#65039; &nbsp;&nbsp;") + item.querySelectorAll('span')[1].innerHTML;
+        closeAllDropdowns();
+        item.parentElement.parentElement.classList.add('selected');
+      });
+    });
+  </script>
+</body>
+</html>

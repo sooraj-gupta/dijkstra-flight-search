@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flights</title>
+  <style>
+
+    @import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@100;200;300;400;500;600;700;800;900&display=swap');
+    
+    :root
+    {
+      --color1: #fff;
+      --color2: #222;
+      --color3: #000a;
+    }
+
+    html, body{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body
+    {
+      font-family: 'Anuphan', sans-serif;
+      color: var(--color2);
+      box-sizing: border-box;
+      padding: 50px;
+      height: 100vh;
+      position: relative;
+    }
+    #loading
+    {
+      left: 0;
+      top: 0;
+      opacity: 1;
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      transition: 0.5s;
+    }
+
+    @keyframes loading {
+      0% { transform: translate(-50%,-50%) rotate(0deg); }
+      100% { transform: translate(-50%,-50%) rotate(360deg); }
+    }
+    .spinner-wrapper {
+      width: 100px;
+      height: 100px;
+      display: inline-block;
+      overflow: hidden;
+      position: absolute;
+      /* background: #f1f2f3; */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+    }
+    .spinner div {
+      position: absolute;
+      width: 56px;
+      height: 56px;
+      border: 14px solid #1d0e0b;
+      border-top-color: transparent;
+      border-radius: 50%;
+    }
+    .spinner div {
+      animation: loading 1s linear infinite;
+      top: 50%;
+      left: 50%;
+      /* transform: translate(-50%,-50%); */
+      
+    }
+    .spinner {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      transform: translateZ(0) scale(1);
+      backface-visibility: hidden;
+      transform-origin: 0 0; /* see note above */
+    }
+    .spinner { box-sizing: content-box; }
+
+    .main-wrapper{
+      opacity: 0;
+      transition: 0.5s;
+      width: 100%;
+      box-sizing: border-box;
+      height: 100%;
+      background-color: var(--color1);
+    }
+
+    .wrapper{
+      text-align: left;
+      padding: 30px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    h2
+    {
+      font-weight: 400;
+      font-size: 2.5em;
+      margin: 0px;
+    }
+
+    .inputs
+    {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content:stretch;
+
+      padding: 25px 0px;
+      margin-top: 30px;
+
+      border-top: 1px solid #0002;
+    }
+    .dropdown
+    {
+      position: relative;
+      margin: 0px 5px;
+      flex-basis: 100%;
+    }
+
+    .dropdown-btn
+    {
+      background-color: var(--color1);
+      border: 1px solid #0005;
+      border-radius: 4px;
+      padding: 10px 15px;
+      cursor: pointer;
+      transition:  0.2s ease;
+      color: var(--color3);
+    }
+    .dropdown-btn:hover
+    {
+      background-color: #fafafa;
+    }
+    .dropdown-btn a
+    {
+      font-size: 1em;
+      font-weight: 400;
+    }
+    a.title
+    {
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .dropdown-content
+    {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background-color: var(--color1);
+      border: 1px solid #0005;
+      border-bottom-right-radius: 5px;
+      border-bottom-left-radius: 5px;
+      border-top: none;
+      display: none;
+      box-sizing: border-box;
+      z-index: 1;
+      max-height: 300px;
+      overflow-y: scroll;
+    }
+    .dropdown-content .dropdown-item
+    {
+      cursor: pointer;
+      transition: all 0.1s ease;
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-size: 0.9em;
+    }
+    .dropdown-content .dropdown-item span:first-of-type
+    {
+      margin-right: 4px;
+    }
+    .dropdown.on .dropdown-content
+    {
+      display: block;
+    }
+    
+    .dropdown-content .dropdown-item:hover
+    {
+      background-color: #f8f8f8;
+    }
+    .dropdown-content .dropdown-item:active
+    {
+      background-color: #eee;
+    }
+    .dropdown.on .dropdown-btn
+    {
+      border-bottom-right-radius: 0px;
+      border-bottom-left-radius: 0px;
+      border-bottom-color: transparent;
+      overflow: hidden;
+    }
+
+    .dropdown::after
+    {
+      position: absolute;
+      top: 0px;
+      background-color: transparent;
+      font-size: 11px;
+      opacity: 0;
+      transition: all 0.2s;
+    }
+
+    #leavingfrom::after
+    {
+      content: "Leaving From";
+      left: 41px;
+    }
+    #goingto::after
+    {
+      content: "Going To";
+      left: 41px;
+    }
+    #airline::after
+    {
+      content: "Airline";
+      left: 49px;
+    }
+    #exclude-airport::after
+    {
+      content: "Exclude Airport";
+      left: 41px;
+    }
+    #include-airport::after
+    {
+      content: "Include Airport";
+      left: 41px;
+    }
+
+    .dropdown.selected::after
+    {
+      position: absolute;
+      top: 7px;
+      opacity: 0.5;
+    }
+    .dropdown.selected .dropdown-btn
+    {
+      color: var(--color2);
+      padding-top: 16px;
+      padding-bottom: 4px;
+    }
+
+    button
+    {
+      background-color: var(--color2);
+      color: var(--color1);
+      width: 100%;
+      font-family: 'Anuphan', sans-serif;
+      font-size: 1em;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 4px;
+      margin: 0px 5px;
+      box-sizing: border-box;
+      transition: 0.2s;
+    }
+
+    button:hover
+    {
+      cursor: pointer;
+      background-color: #000;
+    }
+
+    button:active
+    {
+      transform: scaleY(0.98) scaleX(0.98);
+    }
+
+    button.loading
+    {
+      background-color: #0005;
+      color: #0002;
+    }
+
+    .dropdown:not(.selected) .dropdown-btn::after
+    {
+      font-family: 'Anuphan', sans-serif;
+      content: "\25BC";
+      color: #0002;
+      position: absolute;
+      top: 55%;
+      right: 20px;
+      transform: translateY(-50%) scaleX(2);
+      font-size: 0.2em;
+    }
+
+    .one-result
+    {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .one-result .summary
+    {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      /* justify-content: space-between; */
+      border-top: 1px solid #0002;
+      /* border-bottom: 1px solid #0002; */
+      width: 100%;
+      padding: 10px 10px;
+      transition: 2s;
+      background-color: #a8ffbf33;
+    }
+     
+    .summary-title
+    {
+      font-size: 20px;      
+      margin: 5px 0px;
+      display: none;
+      margin-top: 20px;
+    }
+    .stop
+    {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 3px;
+      border: 1px solid #0001;
+      background-color: #0000;
+      color: #000;
+      font-size: 1em;
+      font-weight: 500;
+      padding: 6px 10px;
+      margin-bottom: 5px;
+      /* min-width: 100px; */
+    }
+
+    .stop:first-of-type, .stop:last-of-type
+    {
+      background-color: #afa3;
+    }
+
+    .arrow
+    {
+      font-size: 1.5em;
+      color: #0004;
+      margin: 0px 10px;
+      margin-bottom: 5px;
+      /* min-width: 50px; */
+    }
+
+    .default
+    {
+      position: relative;
+      display: none;
+    }
+    .default::after
+    {
+      content: "\2715";
+      color: #0003;
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      font-weight: 900;
+    }
+
+    .selected .default
+    {
+      display: block;
+    }   
+
+
+    @media (max-width: 1000px)
+    {
+      .inputs
+      {
+        flex-wrap: wrap;
+      }
+      .dropdown
+      {
+        margin: 5px 0px;
+      }
+      body
+      {
+        padding: 0px 10px;
+      }
+      .summary
+      {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+      .stop
+      {
+        width: 100%;
+      }
+      .arrow
+      {
+        transform: rotate(90deg);
+        font-size: 1em;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <div id = "loading">
+    <div class="spinner-wrapper">
+      <div class="spinner">
+        <div></div>
+      </div>
+    </div>
+  </div>
+  <div class = "main-wrapper">
+    <div class = "wrapper">
+      <h2>Dijkstra's Flight Search</h2>
+      <p style = "margin-top: 15px; opacity: 0.8; margin-left: 3px">
+        This is a simple flight search application that uses Dijkstra's algorithm to find the shortest path between two airports. 
+        This application queries a server that runs a Java implementation of Dijkstra's algorithm to find the shortest path between two airports
+        using publicly available data for airports, airlines, and route information. Select an origin and destination airport, and optionally select an airline, exlude an airport, or include an airport 
+      </p>
+      <div class = "inputs">
+        <div id = "leavingfrom" class = "dropdown">
+          <div class = "dropdown-btn">
+            <a  class = "title">&#128205; Leaving From<a style = "color:red">*</a></a>
+          </div>
+          <div class = "dropdown-content">
+            <!--
+              <div class = "dropdown-item">
+              <span>&#128747;</span>
+              <span>San Francisco (SFO)</span>
+            </div>
+            -->
+          </div>
+        </div>
+        <div id = "goingto" class = "dropdown">
+          <div class = "dropdown-btn">
+            <a class = "title">&#128205; Going To<a style = "color:red">*</a></a>
+          </div>
+          
+          <div class = "dropdown-content">
+            <!--
+              <div class = "dropdown-item">
+              <span>&#128748;</span>
+              <span>San Francisco (SFO)</span>
+            </div>
+            -->
+            <div class = "default dropdown-item">
+              <span>&#128205;&nbsp;&nbsp; Going To<a style = "color:red">*</a>
+            </div>
+          </div>
+        </div>
+        <div id = "airline" class = "dropdown">
+          <div  class = "dropdown-btn">
+            <a class = "title">&#9992;&#65039;&nbsp;&nbsp; Airline</a>
+          </div>
+          <div class = "dropdown-content">
+            <!--
+              <div class = "dropdown-item">
+              <span>&#9992;&#65039;</span>
+              <span>United Airlines</span>
+            </div>
+            -->
+            <div class = "default dropdown-item">
+              <span>&#9992;&#65039;&nbsp;&nbsp; Airline</span>
+            </div>
+
+          </div>
+        </div>
+        <div id = "exclude-airport" class = "dropdown">
+          <div  class = "dropdown-btn">
+            <a class = "title">&#128205; Exclude Airport</a>
+          </div>
+          <div class = "dropdown-content">
+            <!--
+              <div class = "dropdown-item">
+              <span>&#9992;&#65039;</span>
+              <span>United Airlines</span>
+            </div>
+            -->
+            <div class = "default dropdown-item">
+              <span>&#128205; Exclude Airport</span>
+            </div>
+
+          </div>
+        </div>
+        <div id = "include-airport" class = "dropdown">
+          <div class = "dropdown-btn">
+            <a class = "title">&#128205; Include Airport</a>
+          </div>
+          <div class = "dropdown-content">
+            <!--
+              <div class = "dropdown-item">
+              <span>&#9992;&#65039;</span>
+              <span>United Airlines</span>
+            </div>
+            -->
+            <div class = "default dropdown-item">
+              <span>&#128205;  Include Airport</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <button id = "search">Search</button>
+
+      <span class = "summary-title">Shortest Path:</span>
+      <div class = "one-result">        
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+
+    let assetsLocation = "public/";
+    let serverLocation = "https://app.emojdle.com/airlines/";
+    let requestURL = serverLocation
+    let loadURL = serverLocation + "load?location="+assetsLocation
+
+    let loadFile = null;
+
+    let dropdowns = document.querySelectorAll('.dropdown');
+    let dropdownBtns = document.querySelectorAll('.dropdown-btn');
+    let dropdownContents = document.querySelectorAll('.dropdown-content');
+    let dropdownItems = document.querySelectorAll('.dropdown-item');
+
+    let leavingFrom = document.querySelector('#leavingfrom');
+    let goingTo = document.querySelector('#goingto');
+    let airline = document.querySelector('#airline');
+    
+    let leavingFromContent = document.querySelector('#leavingfrom .dropdown-content');
+    let goingToContent = document.querySelector('#goingto .dropdown-content');
+    let excludeAirportContent = document.querySelector('#exclude-airport .dropdown-content');
+    let includeAirportContent = document.querySelector('#include-airport .dropdown-content');
+    let airlineContent = document.querySelector('#airline .dropdown-content');
+    
+    fetch( requestURL + "search",{method: 'GET'}).then(response => response.json()).then(data => {
+      console.log(data);
+    });
+    
+    //load data onto screen
+    fetch( loadURL,{method: 'GET'}).then(response => response.json()).then(data => {
+      loadDataToScreen(data);
+    });
+
+
+    const loadDataToScreen = function( data )
+    {
+      data['Airports'] = data['Airports'].filter(airport => !airport.includes("?"));
+      // data['Airports'] = data['Airports'].filter(airport => airport.includes("International"));
+      
+      data.Airports.sort();
+
+
+      let airports = data['Airports'];
+      let airlines = data['Airlines'];
+
+      /*
+      <div class = "dropdown-item">
+        <span>&#128747;</span>
+        <span>San Francisco (SFO)</span>
+      </div>
+      */
+      for( let i = 0; i < airports.length; i++ )
+      {
+        let airportItemFrom = document.createElement('div');
+        airportItemFrom.classList.add('dropdown-item');
+        airportItemFrom.innerHTML = `
+          <span>&#128747;</span>
+          <span>${airports[i]}</span>
+        `;
+        leavingFromContent.appendChild(airportItemFrom);
+
+        // console.log(airportItemFrom.innerHTML);
+
+        let airportItemTo = document.createElement('div');
+        airportItemTo.classList.add('dropdown-item');
+        airportItemTo.innerHTML = `
+          <span>&#128748;</span>
+          <span>${airports[i]}</span>
+        `;
+        goingToContent.appendChild(airportItemTo);
+
+        let airportItemExclude = document.createElement('div');
+        airportItemExclude.classList.add('dropdown-item');
+        airportItemExclude.innerHTML = `
+          <span>&#128748;</span>
+          <span>${airports[i]}</span>
+        `;
+        excludeAirportContent.appendChild(airportItemExclude);
+
+        let airportItemInclude = document.createElement('div');
+        airportItemInclude.classList.add('dropdown-item');
+        airportItemInclude.innerHTML = `
+          <span>&#128748;</span>
+          <span>${airports[i]}</span>
+        `;
+        includeAirportContent.appendChild(airportItemInclude);
+      }
+      for( airline in airlines )
+      {
+        let airlineItem = document.createElement('div');
+        airlineItem.classList.add('dropdown-item');
+        airlineItem.innerHTML = `
+          <span>&#9992;&#65039;</span>
+          <span>${airlines[airline]}</span>
+        `;
+        airlineContent.appendChild(airlineItem);
+      }
+
+      document.dispatchEvent(new Event("content-loaded"));
+
+    }
+
+
+
+  </script>
+  <script>
+    //once content has been loaded
+    document.addEventListener( "content-loaded" , function() {
+      console.log("content loaded");
+      document.querySelector('#loading').style.opacity = "0";
+      document.querySelector('.main-wrapper').style.opacity = "1";
+      setTimeout( () => {
+        document.querySelector('#loading').style.display = "none";
+      }, 500);
+
+      dropdowns = document.querySelectorAll('.dropdown');
+      dropdownBtns = document.querySelectorAll('.dropdown-btn');
+      dropdownContents = document.querySelectorAll('.dropdown-content');
+      dropdownItems = document.querySelectorAll('.dropdown-item');
+
+      const closeAllDropdowns = () => {
+        dropdowns.forEach(dropdown => {
+          closeDropdown(dropdown);
+        });
+      }
+
+      const openDropdown = (dropdown) => {
+        closeAllDropdowns();
+        dropdown.classList.add('on');
+      }
+
+      const closeDropdown = (dropdown) => {
+        dropdown.classList.remove('on');
+      }
+
+      dropdownBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          openDropdown(btn.parentElement);
+        });
+
+      });
+
+      document.addEventListener('click', (e) => {
+        if(e.target.classList.contains('dropdown-btn') 
+        || e.target.classList.contains('dropdown-item') 
+        || e.target.classList.contains('dropdown-content')
+        || e.target.classList.contains('title')
+        || e.target.parentElement.classList.contains('dropdown-btn'))
+        {
+          return;
+        }
+        closeAllDropdowns();
+      });
+
+      
+      
+
+      dropdownItems.forEach((item) => {
+        item.addEventListener('click', () => {
+
+          if( item.classList.contains('default') )
+          {
+            item.parentElement.parentElement.querySelector('.dropdown-btn').innerHTML = `<span class = "title">${item.querySelector('span').innerHTML}</span>`;
+            closeAllDropdowns();
+            item.parentElement.parentElement.classList.remove('selected');
+            return;
+          }
+
+          item.parentElement.parentElement.querySelector('.dropdown-btn').innerHTML = (( 
+            item.parentElement.parentElement.id == "airline"
+          ) ?"&#9992;&#65039; &nbsp;&nbsp;":"&#128205; ") + `<a>${item.querySelectorAll('span')[1].innerHTML}</a>`;
+            
+          closeAllDropdowns();
+          item.parentElement.parentElement.classList.add('selected');
+        });
+      });
+
+
+      document.getElementById( "search" ).onclick = function( e ){
+
+        e.target.classList.add('loading');
+        e.target.innerHTML = "Searching...";
+
+        let airline = document.querySelector('#airline');
+        let ex = document.querySelector('#exclude-airport');
+        let inc = document.querySelector('#include-airport');
+        
+
+        if( !leavingFrom.classList.contains('selected') || !goingTo.classList.contains('selected') )
+        {
+          alert("Please select an origin and destination");
+          document.getElementById( "search" ).classList.remove('loading');
+          document.getElementById( "search" ).innerHTML = "Search";
+          return;
+        }
+
+        if( ex.classList.contains('selected') && inc.classList.contains('selected') )
+        {
+          alert("You cannot exclude and include an airport at the same time");
+          document.getElementById( "search" ).classList.remove('loading');
+          document.getElementById( "search" ).innerHTML = "Search";
+          return;
+        }
+
+        if( airline.classList.contains('selected') && (ex.classList.contains('selected') || inc.classList.contains('selected')) )
+        {
+          alert("You cannot exclude or include an airport when searching for a specific airline");
+          document.getElementById( "search" ).classList.remove('loading');
+          document.getElementById( "search" ).innerHTML = "Search";
+          return;
+        }
+ 
+        let departure = leavingFrom.querySelector('.dropdown-btn').querySelector('a').innerText.trim()
+        let destination = goingTo.querySelector('.dropdown-btn').querySelector('a').innerText.trim()
+
+        let query = `?departure=${departure}&destination=${destination}`;
+        if( airline.classList.contains('selected') )
+        {
+          let airlineName = airline.querySelector('.dropdown-btn').querySelector('a').innerText.trim();
+          query += `&airline=${airlineName}`;
+        }
+        if( ex.classList.contains('selected') )
+        {
+          let excludeAirport = ex.querySelector('.dropdown-btn').querySelector('a').innerText.trim();
+          query += `&exclude=${excludeAirport}`;
+        }
+        if( inc.classList.contains('selected') )
+        {
+          let includeAirport = inc.querySelector('.dropdown-btn').querySelector('a').innerText.trim();
+          query += `&include=${includeAirport}`;
+        }
+
+        search( query );
+      }
+    });
+
+    function search( query )
+    {
+      fetch(requestURL + "search" + query).then(response => response.json()).then(data => {
+
+        data = JSON.parse(data);
+
+        let route = data['route'];
+        
+        if( route == "" ){
+          document.getElementsByClassName('summary-title')[0].style.display = "block";
+          document.getElementsByClassName('one-result')[0].innerHTML = `
+            <div class="summary">
+              <span class="stop">&#128205; No route found</span>
+            </div>`;
+            setTimeout( () => {
+          document.getElementsByClassName('summary')[0].style.backgroundColor = "#ffffff"; 
+        }, 300);
+          document.getElementById( "search" ).classList.remove('loading');
+          document.getElementById( "search" ).innerHTML = "Search";
+          return;
+        }
+        let stops = route.split(",");
+        let summary = "";
+        for( let i = 0; i < stops.length; i++ )
+        {
+          let stop = stops[i];
+          summary += `<span class="stop">&#128205 ${stop}</span>`;
+          if( i != stops.length - 1 )
+          {
+            summary += "<span class = 'arrow'>&#8594;</span>";
+          }
+        }
+        document.getElementsByClassName('summary-title')[0].style.display = "block";
+        document.getElementsByClassName('one-result')[0].innerHTML = `
+          <div class="summary">
+            ${summary}
+          </div>`;
+
+        setTimeout( () => {
+          document.getElementsByClassName('summary')[0].style.backgroundColor = "#ffffff"; 
+        }, 300);
+          document.getElementById( "search" ).classList.remove('loading');
+          document.getElementById( "search" ).innerHTML = "Search";
+      });
+    }
+  </script>
+</body>
+</html>
