@@ -1,6 +1,6 @@
 # dijkstra-flight-search
 
-If my server is currently running then the project can be accessed at https://app.emojdle.com/airlines
+If my server is currently running then the project can be accessed at https://sooraj.emojdle.com/airlines
 
 Otherwise, clone the repo and run `npm install` within the server folder
 Then, change the `serverLocation` variable in `public/index.html` from "https://app.emojdle.com/airlines/" to "http://localhost:3000/airlines/"
